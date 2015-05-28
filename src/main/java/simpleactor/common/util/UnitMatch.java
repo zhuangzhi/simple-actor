@@ -1,0 +1,115 @@
+package simpleactor.common.util;
+
+/**
+ * Version of {@link scala.PartialFunction} that can be built during
+ * runtime from Java.
+ * This is a specialized version of {@link UnitMatch} to map java
+ * void methods to {@link scala.runtime.BoxedUnit}.
+ *
+ * @param <I> the input type, that this PartialFunction will be applied to
+ *
+ * This is an EXPERIMENTAL feature and is subject to change until it has received more real world testing.
+ */
+public class UnitMatch<I> extends AbstractMatch<I, Object> {
+
+    /**
+     * Convenience function to create a {@link UnitPFBuilder} with the first
+     * case statement added.
+     *
+     * @param type  a type to match the argument against
+     * @param apply  an action to apply to the argument if the type matches
+     * @return a builder with the case statement added
+     * @see UnitPFBuilder#match(Class, FI.UnitApply)
+     */
+    public static <F> UnitPFBuilder match(final Class<F> type, FI.UnitApply<F> apply) {
+        return new UnitPFBuilder().match(type, apply);
+    }
+
+    /**
+     * Convenience function to create a {@link UnitPFBuilder} with the first
+     * case statement added.
+     *
+     * @param type  a type to match the argument against
+     * @param predicate  a predicate that will be evaluated on the argument if the type matches
+     * @param apply  an action to apply to the argument if the type and predicate matches
+     * @return a builder with the case statement added
+     * @see UnitPFBuilder#match(Class, FI.TypedPredicate, FI.UnitApply)
+     */
+    public static <F> UnitPFBuilder match(final Class<F> type,
+                                                final FI.TypedPredicate<F> predicate,
+                                                final FI.UnitApply<F> apply) {
+        return new UnitPFBuilder().match(type, predicate, apply);
+    }
+
+    /**
+     * Convenience function to create a {@link UnitPFBuilder} with the first
+     * case statement added.
+     *
+     * @param object  the object to compare equals with
+     * @param apply  an action to apply to the argument if the object compares equal
+     * @return a builder with the case statement added
+     * @see UnitPFBuilder#matchEquals(Object, FI.UnitApply)
+     */
+    public static <F> UnitPFBuilder matchEquals(final F object,
+                                                      final FI.UnitApply<F> apply) {
+        return new UnitPFBuilder().matchEquals(object, apply);
+    }
+
+    /**
+     * Convenience function to create a {@link UnitPFBuilder} with the first
+     * case statement added.
+     *
+     * @param object  the object to compare equals with
+     * @param predicate  a predicate that will be evaluated on the argument the object compares equal
+     * @param apply  an action to apply to the argument if the object compares equal
+     * @return a builder with the case statement added
+     * @see UnitPFBuilder#matchEquals(Object, FI.UnitApply)
+     */
+    public static <F> UnitPFBuilder matchEquals(final F object,
+                                                      final FI.TypedPredicate<F> predicate,
+                                                      final FI.UnitApply<F> apply) {
+        return new UnitPFBuilder().matchEquals(object, predicate, apply);
+    }
+
+    /**
+     * Convenience function to create a {@link UnitPFBuilder} with the first
+     * case statement added.
+     *
+     * @param apply  an action to apply to the argument
+     * @return a builder with the case statement added
+     * @see UnitPFBuilder#matchAny(FI.UnitApply)
+     */
+    public static <F> UnitPFBuilder matchAny(final FI.UnitApply<F> apply) {
+        return new UnitPFBuilder().matchAny(apply);
+    }
+
+    /**
+     * Create a {@link UnitMatch} from the builder.
+     *
+     * @param builder  a builder representing the partial function
+     * @return a {@link UnitMatch} that can be reused
+     */
+    public static  UnitMatch create(UnitPFBuilder builder) {
+        return new UnitMatch<>(builder.build());
+    }
+
+    private UnitMatch(PartialFunction<I, Object> statements) {
+        super(statements);
+    }
+
+    /**
+     * Convenience function to make the Java code more readable.
+     *
+     * <pre><code>
+     *   UnitMatcher&lt;X&gt; matcher = UnitMatcher.create(...);
+     *
+     *   matcher.match(obj);
+     * </code></pre>
+     *
+     * @param i  the argument to apply the match to
+     * @throws scala.MatchError  if there is no match
+     */
+    public void match(I i) throws MatchError {
+        statements.apply(i);
+    }
+}

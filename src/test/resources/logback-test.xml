@@ -1,0 +1,22 @@
+<configuration>
+    <property name="LINE_PATTERN" value="%date{yyyyMMdd HH:mm:ss.SSS} %level [%contextName] [%thread] [%class{10}.%path:%line] %message%n"/>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${LINE_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <append>true</append>
+        <file>target/simple-reactor-test.log</file>
+        <encoder>
+            <pattern>${LINE_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <root>
+        <level value="INFO"/>
+        <appender-ref ref="FILE"/>
+    </root>
+</configuration>
